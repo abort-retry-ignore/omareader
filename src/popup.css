@@ -258,6 +258,39 @@ kbd {
   background-image: linear-gradient(currentColor, currentColor);
 }
 
+.tints {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s);
+  width: 100%;
+}
+
+.slider {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr) 5ch;
+  align-items: center;
+  gap: var(--s);
+  width: 100%;
+}
+
+.slider input {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  color: inherit;
+  accent-color: currentColor;
+}
+
+.slider input:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 2px;
+}
+
+.slider output {
+  text-align: right;
+}
+
 #update a {
   color: inherit;
 }

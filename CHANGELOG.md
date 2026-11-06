@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- Details in the popup has background tint and text tint sliders, from 0 to 100 percent, and checkboxes for Style form controls and Style text selection. Text tint 0 gives tinted backgrounds with neutral gray text. A slider repaints open tabs when it is released. The defaults match the previous behavior.
+
 ## 0.3.1 — 2026-10-15
 
 ### Fixed

@@ -48,6 +48,26 @@
             <span class="v"><i id="fg"></i><span id="fg-label"></span></span>
           </div>
         </div>
+        <div class="tints">
+          <label class="slider">
+            <span class="k">background tint</span>
+            <input id="tint-background" type="range" min="0" max="100" step="5" value="100" />
+            <output id="tint-background-out">100%</output>
+          </label>
+          <label class="slider">
+            <span class="k">text tint</span>
+            <input id="tint-text" type="range" min="0" max="100" step="5" value="100" />
+            <output id="tint-text-out">100%</output>
+          </label>
+          <label class="fixes">
+            <input id="tint-controls" type="checkbox" checked />
+            <span>Style form controls</span>
+          </label>
+          <label class="fixes">
+            <input id="tint-selection" type="checkbox" checked />
+            <span>Style text selection</span>
+          </label>
+        </div>
         <label class="fixes">
           <input id="site-fixes" type="checkbox" checked />
           <span>Fetch site fixes daily</span>

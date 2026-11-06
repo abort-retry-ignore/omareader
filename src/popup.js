@@ -19,6 +19,12 @@ const bgLabel = document.querySelector("#bg-label");
 const fgLabel = document.querySelector("#fg-label");
 const darkReader = document.querySelector("#dark-reader");
 const siteFixesInput = document.querySelector("#site-fixes");
+const tintBackground = document.querySelector("#tint-background");
+const tintBackgroundOut = document.querySelector("#tint-background-out");
+const tintText = document.querySelector("#tint-text");
+const tintTextOut = document.querySelector("#tint-text-out");
+const tintControls = document.querySelector("#tint-controls");
+const tintSelection = document.querySelector("#tint-selection");
 const updateInstalled = document.querySelector("#update-installed");
 const updateAvailable = document.querySelector("#update-available");
 const darkReaderText = document.querySelector("#dark-reader-text");
@@ -83,11 +89,32 @@ function render(state) {
   statusNode.hidden = note === "";
   darkReader.hidden = !state.darkReaderPrompt;
   siteFixesInput.checked = state.siteFixesAutoUpdate !== false;
+  renderTint(state.tint);
   applyUpdate(state.updateVersion, state.updateChecked);
   if (state.darkReaderPrompt) {
     darkReaderText.textContent = state.darkReaderKnown ? DARK_READER_KNOWN : DARK_READER_UNKNOWN;
   }
   syncDetails();
+}
+
+function renderTint(tint) {
+  if (!tint) {
+    return;
+  }
+  tintBackground.value = tint.background;
+  tintBackgroundOut.textContent = `${tint.background}%`;
+  tintText.value = tint.text;
+  tintTextOut.textContent = `${tint.text}%`;
+  tintControls.checked = tint.controls !== false;
+  tintSelection.checked = tint.selection !== false;
+}
+
+// A change repaints every open tab, so a slider sends once it is released.
+function sendTint(change) {
+  if (latest) {
+    latest.tint = { ...latest.tint, ...change };
+  }
+  port.postMessage({ type: "setTint", tint: change });
 }
 
 function applyUpdate(available, checked) {
@@ -153,6 +180,24 @@ document.querySelector("#dark-reader-off").addEventListener("click", async () =>
 });
 document.querySelector("#dark-reader-keep").addEventListener("click", () => {
   port.postMessage({ type: "darkReaderChoice", disable: false });
+});
+tintBackground.addEventListener("input", () => {
+  tintBackgroundOut.textContent = `${tintBackground.value}%`;
+});
+tintBackground.addEventListener("change", () => {
+  sendTint({ background: Number(tintBackground.value) });
+});
+tintText.addEventListener("input", () => {
+  tintTextOut.textContent = `${tintText.value}%`;
+});
+tintText.addEventListener("change", () => {
+  sendTint({ text: Number(tintText.value) });
+});
+tintControls.addEventListener("change", () => {
+  sendTint({ controls: tintControls.checked });
+});
+tintSelection.addEventListener("change", () => {
+  sendTint({ selection: tintSelection.checked });
 });
 siteFixesInput.addEventListener("change", () => {
   port.postMessage({ type: "setSiteFixesAutoUpdate", enabled: siteFixesInput.checked });

@@ -39,6 +39,8 @@ The themeing is [Dark Reader](https://darkreader.org/)’s dynamic theme engine 
 
 The toolbar shows the dark glasses while Omareader is on, and the light glasses while it is off. Pause on this site leaves that host alone and shows the light glasses on its tabs.
 
+Dark Reader pulls every near-neutral color toward the hue of the theme background, and every near-neutral text color toward the hue of the theme foreground. Details in the popup lets you dial that back. Background tint and text tint run from 0 to 100 percent, and scale how much of each hue the page gets. Lightness is kept, so contrast holds. For tinted backgrounds with neutral gray text, set text tint to 0. Style form controls and Style text selection can be turned off to leave those to the browser. The defaults, 100 percent and both boxes checked, are the behavior before these settings existed.
+
 Link and syntax colors stay on Dark Reader’s usual path. They are not replaced with the terminal’s red, green, and blue. Text that would disappear into the theme background is drawn in the theme foreground. A stylesheet from another host is fetched by the extension and themed the same way. On a dark theme the Amazon header wordmark stays the light sprite Amazon ships, and the orange smile stays orange.
 
 <picture>

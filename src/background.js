@@ -5,6 +5,7 @@ import { decideDarkReaderPrompt } from "./dark-reader.js";
 import { fromExtensionPage } from "./extension-page.js";
 import { readThemeResource, THEME_RESOURCE } from "./theme-fetch.js";
 import { hostFailureText, paletteFromHost } from "./host-message.js";
+import { normalizeTint } from "./tint.js";
 import { COMMAND_BADGE_MS, hostFromUrl, normalizeHost, runReaderCommand } from "./commands.js";
 import {
   MAX_RELEASES_BYTES,
@@ -26,6 +27,7 @@ let nativePort = null;
 let palette = null;
 let enabled = true;
 let pausedSites = [];
+let tint = normalizeTint(null);
 let hostError = "";
 let reconnectTimer = null;
 let reconnectDelay = RECONNECT_MIN_MS;
@@ -45,6 +47,7 @@ function snapshot() {
     enabled,
     pausedSites,
     palette,
+    tint,
     hostError,
     darkReaderPrompt,
     darkReaderKnown,
@@ -521,6 +524,17 @@ function setEnabled(value) {
   void syncEarlyCss();
 }
 
+// Only the fields the popup sends change. normalizeTint clamps the rest.
+function setTint(change) {
+  if (!change || typeof change !== "object") {
+    return;
+  }
+  tint = normalizeTint({ ...tint, ...change });
+  chrome.storage.local.set({ tint });
+  chrome.storage.session.set({ tint });
+  broadcast();
+}
+
 function setSitePaused(host, paused) {
   host = normalizeHost(host);
   if (!host) {
@@ -588,6 +602,8 @@ chrome.runtime.onConnect.addListener((port) => {
       void resolveDarkReader(Boolean(message.disable));
     } else if (message.type === "setSiteFixesAutoUpdate") {
       setSiteFixesAutoUpdate(message.enabled);
+    } else if (message.type === "setTint") {
+      setTint(message.tint);
     }
   });
   postTo(port);
@@ -813,9 +829,12 @@ async function start() {
     enabled: true,
     pausedSites: [],
     palette: null,
+    tint: null,
     darkReaderChoice: "",
     darkReaderOffered: false,
   });
+  tint = normalizeTint(stored.tint);
+  chrome.storage.session.set({ tint });
   enabled = stored.enabled !== false;
   pausedSites = Array.isArray(stored.pausedSites)
     ? stored.pausedSites.map(normalizeHost).filter(Boolean)

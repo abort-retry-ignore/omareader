@@ -6,7 +6,7 @@ const MIN_TEXT = 4.5;
 const LIGHT_CAP = 0.96;
 const DARK_CAP = 0.08;
 
-function parseColor(value) {
+export function parseColor(value) {
   const text = String(value ?? "").trim();
   const named = text.toLowerCase();
   if (named === "black") {
@@ -77,7 +77,7 @@ function contrast(left, right) {
   return (lighter + 0.05) / (darker + 0.05);
 }
 
-function rgbToHsl(hex) {
+export function rgbToHsl(hex) {
   const [red, green, blue] = channels(hex).map((part) => part / 255);
   const max = Math.max(red, green, blue);
   const min = Math.min(red, green, blue);
@@ -118,7 +118,7 @@ function hueChannel(p, q, t) {
   return p;
 }
 
-function hslToHex({ h, s, l }) {
+export function hslToHex({ h, s, l }) {
   if (s === 0) {
     const gray = Math.round(l * 255);
     return `#${[gray, gray, gray].map((part) => part.toString(16).padStart(2, "0")).join("")}`;

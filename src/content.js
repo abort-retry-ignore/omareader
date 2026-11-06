@@ -3,6 +3,7 @@ import { disable, enable, setFetchMethod } from "darkreader";
 import { readableInvert, readablePoles, repairFixColors } from "./contrast.js";
 import { DARK_READER_PROXY_ATTRIBUTE, extensionProxyInjected } from "./dark-reader.js";
 import { THEME_RESOURCE } from "./theme-fetch.js";
+import { normalizeTint, tintPoles } from "./tint.js";
 
 // Dark Reader replaces sendMessage and drops its return value, so the
 // stylesheet fetch uses its own port. The page cannot read another host.
@@ -50,20 +51,22 @@ let earlySealed = false;
 let polesKey = "";
 let polesValue = null;
 
-function polesFor(palette) {
+function polesFor(palette, tint) {
   const background = palette?.background;
   const foreground = palette?.foreground;
-  const key = `${background}\0${foreground}`;
+  const key = `${background}\0${foreground}\0${tint.background}\0${tint.text}`;
   if (polesValue && key === polesKey) {
     return polesValue;
   }
   polesKey = key;
-  polesValue = readablePoles(background, foreground);
+  // Tint first, then check contrast against the colors the page will get.
+  const tinted = tintPoles({ background, foreground }, tint);
+  polesValue = readablePoles(tinted.background, tinted.foreground);
   return polesValue;
 }
 
-function themeFrom(palette) {
-  const poles = polesFor(palette);
+function themeFrom(palette, tint) {
+  const poles = polesFor(palette, tint);
   const light = palette.mode === "light";
   return {
     mode: light ? 0 : 1,
@@ -75,16 +78,17 @@ function themeFrom(palette) {
     darkSchemeTextColor: poles.foreground,
     lightSchemeBackgroundColor: poles.background,
     lightSchemeTextColor: poles.foreground,
-    selectionColor: palette.selection || "auto",
-    styleSystemControls: true,
+    // An empty selectionColor leaves the browser's own selection colors alone.
+    selectionColor: tint.selection ? palette.selection || "auto" : "",
+    styleSystemControls: tint.controls,
   };
 }
 
-function themedFix(palette, fix) {
+function themedFix(palette, tint, fix) {
   if (!fix || typeof fix !== "object") {
     return fix;
   }
-  const poles = polesFor(palette);
+  const poles = polesFor(palette, tint);
   const css = typeof fix.css === "string"
     ? repairFixColors(fix.css, poles.background, poles.foreground)
     : fix.css;
@@ -112,8 +116,9 @@ function apply(state) {
   // siteFix is this page's Dark Reader corrections. A later download has to
   // change this key so the engine repaints with the new list.
   const hasFix = Boolean(state && Object.prototype.hasOwnProperty.call(state, "siteFix"));
-  const fix = hasFix && state.siteFix && typeof state.siteFix === "object" ? themedFix(palette, state.siteFix) : null;
-  const next = active ? JSON.stringify([palette, hasFix ? fix : null]) : "";
+  const tint = normalizeTint(state?.tint);
+  const fix = hasFix && state.siteFix && typeof state.siteFix === "object" ? themedFix(palette, tint, state.siteFix) : null;
+  const next = active ? JSON.stringify([palette, hasFix ? fix : null, tint]) : "";
   if (state?.enabled === false || pausedHere(state)) {
     sealEarly();
   }
@@ -127,7 +132,7 @@ function apply(state) {
   }
   lastKey = next;
   if (active) {
-    enable(themeFrom(palette), fix || undefined);
+    enable(themeFrom(palette, tint), fix || undefined);
     sealEarly();
   }
 }
@@ -143,10 +148,15 @@ function cssHex(value) {
 
 async function paintEarly() {
   try {
-    const stored = await chrome.storage.session.get("palette");
+    const stored = await chrome.storage.session.get(["palette", "tint"]);
     const palette = stored?.palette;
-    const background = cssHex(palette?.background);
-    const foreground = cssHex(palette?.foreground);
+    // Paint the same tint the engine will, so the first frame does not change color.
+    const tinted = tintPoles(
+      { background: cssHex(palette?.background), foreground: cssHex(palette?.foreground) },
+      normalizeTint(stored?.tint),
+    );
+    const background = cssHex(tinted.background);
+    const foreground = cssHex(tinted.foreground);
     if (earlySealed || !background || !foreground || !document.documentElement) {
       return;
     }
