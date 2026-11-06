@@ -10,6 +10,8 @@ export const DEFAULT_TINT = Object.freeze({
   text: 100,
   controls: true,
   selection: true,
+  // Saturated colors in logo-sized inline SVGs keep their color, see scripts/vivid-svg-patch.mjs.
+  vivid: true,
 });
 
 function percent(value, fallback) {
@@ -29,6 +31,7 @@ export function normalizeTint(value) {
     text: percent(source.text, DEFAULT_TINT.text),
     controls: source.controls !== false,
     selection: source.selection !== false,
+    vivid: source.vivid !== false,
   };
 }
 

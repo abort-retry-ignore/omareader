@@ -25,6 +25,7 @@ const tintText = document.querySelector("#tint-text");
 const tintTextOut = document.querySelector("#tint-text-out");
 const tintControls = document.querySelector("#tint-controls");
 const tintSelection = document.querySelector("#tint-selection");
+const tintVivid = document.querySelector("#tint-vivid");
 const updateInstalled = document.querySelector("#update-installed");
 const updateAvailable = document.querySelector("#update-available");
 const darkReaderText = document.querySelector("#dark-reader-text");
@@ -107,6 +108,7 @@ function renderTint(tint) {
   tintTextOut.textContent = `${tint.text}%`;
   tintControls.checked = tint.controls !== false;
   tintSelection.checked = tint.selection !== false;
+  tintVivid.checked = tint.vivid !== false;
 }
 
 // A change repaints every open tab, so a slider sends once it is released.
@@ -198,6 +200,9 @@ tintControls.addEventListener("change", () => {
 });
 tintSelection.addEventListener("change", () => {
   sendTint({ selection: tintSelection.checked });
+});
+tintVivid.addEventListener("change", () => {
+  sendTint({ vivid: tintVivid.checked });
 });
 siteFixesInput.addEventListener("change", () => {
   port.postMessage({ type: "setSiteFixesAutoUpdate", enabled: siteFixesInput.checked });

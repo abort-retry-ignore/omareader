@@ -81,6 +81,8 @@ function themeFrom(palette, tint) {
     // An empty selectionColor leaves the browser's own selection colors alone.
     selectionColor: tint.selection ? palette.selection || "auto" : "",
     styleSystemControls: tint.controls,
+    // Not a Dark Reader option. scripts/vivid-svg-patch.mjs reads it from the theme.
+    omareaderVividSvg: tint.vivid,
   };
 }
 

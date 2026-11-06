@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 import { readFileSync } from "node:fs";
 import { PROXY_ATTRIBUTE, PROXY_EVENT } from "../src/page-proxy-install.js";
+import { patchVividSvg } from "./vivid-svg-patch.mjs";
 
 // Chromium blocked this inline script with sha256-r1cyMJILgyTo33FkQEdMV0NGSfZO6vhBj0Gj/Medd20=.
 // That is the hash of `(${injectProxy})(true, true)` after esbuild prints the function.
@@ -105,7 +106,7 @@ export function replaceInlineProxy(source) {
 
 export function createDarkReaderPlugin(darkReaderPath) {
   const source = readFileSync(darkReaderPath, "utf8");
-  const patched = replaceInlineProxy(source);
+  const patched = patchVividSvg(replaceInlineProxy(source));
   const injectProxySource = extractInjectProxy(source);
   return {
     name: "omareader-dark-reader",

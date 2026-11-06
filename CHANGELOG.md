@@ -4,7 +4,8 @@
 
 ### Added
 
-- Details in the popup has background tint and text tint sliders, from 0 to 100 percent, and checkboxes for Style form controls and Style text selection. Text tint 0 gives tinted backgrounds with neutral gray text. A slider repaints open tabs when it is released. The defaults match the previous behavior.
+- Details in the popup has background tint and text tint sliders, from 0 to 100 percent, and checkboxes for Style form controls and Style text selection. Text tint 0 gives tinted backgrounds with neutral gray text. A slider repaints open tabs when it is released. These four default to the previous behavior.
+- Keep logos vivid, on by default. A saturated color in a logo-sized inline SVG is left as the site drew it, so the Google wordmark is no longer dim on a dark theme or pale on a light one. On a dark theme a color with less than 3:1 contrast with the theme background is lightened as text instead. It is a build-time patch to the bundled Dark Reader engine, `scripts/vivid-svg-patch.mjs`, and the build stops if the code it patches moves.
 
 ## 0.3.1 — 2026-10-15
 

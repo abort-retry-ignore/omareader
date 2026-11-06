@@ -19,9 +19,11 @@ function contrastOf(a, b) {
 }
 
 // Defaults keep today's behavior: full tint, styled controls and selection.
-assert.deepEqual(normalizeTint(undefined), { background: 100, text: 100, controls: true, selection: true });
+assert.deepEqual(normalizeTint(undefined), { background: 100, text: 100, controls: true, selection: true, vivid: true });
 assert.deepEqual(normalizeTint(null), { ...DEFAULT_TINT });
-assert.deepEqual(normalizeTint({ text: 0, controls: false }), { background: 100, text: 0, controls: false, selection: true });
+assert.deepEqual(normalizeTint({ text: 0, controls: false }), { background: 100, text: 0, controls: false, selection: true, vivid: true });
+assert.equal(normalizeTint({ vivid: false }).vivid, false);
+assert.equal(normalizeTint({ vivid: 0 }).vivid, true, "only an explicit false turns vivid logos off");
 // Unreadable values fall back to the default, and out-of-range values clamp.
 assert.equal(normalizeTint({ background: "abc" }).background, 100);
 assert.equal(normalizeTint({ background: null }).background, 100);
@@ -76,6 +78,7 @@ console.log("tinted poles stay readable on real Omarchy palettes");
 const content = readFileSync(join(root, "src/content.js"), "utf8");
 assert.match(content, /styleSystemControls:\s*tint\.controls/);
 assert.match(content, /selectionColor:\s*tint\.selection \?/);
+assert.match(content, /omareaderVividSvg:\s*tint\.vivid/);
 assert.match(content, /tintPoles\(\{ background, foreground \}, tint\)/);
 assert.match(content, /JSON\.stringify\(\[palette, hasFix \? fix : null, tint\]\)/, "a tint change must change the apply key");
 
