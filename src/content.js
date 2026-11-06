@@ -54,7 +54,7 @@ let polesValue = null;
 function polesFor(palette, tint) {
   const background = palette?.background;
   const foreground = palette?.foreground;
-  const key = `${background}\0${foreground}\0${tint.background}\0${tint.text}`;
+  const key = `${background}\0${foreground}\0${tint.background}\0${tint.text}\0${tint.contrast}`;
   if (polesValue && key === polesKey) {
     return polesValue;
   }

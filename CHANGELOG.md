@@ -5,6 +5,7 @@
 ### Added
 
 - Details in the popup has background tint and text tint sliders, from 0 to 100 percent, and checkboxes for Style form controls and Style text selection. Text tint 0 gives tinted backgrounds with neutral gray text. A slider repaints open tabs when it is released. These four default to the previous behavior.
+- Text contrast slider, from 0 to 100 percent, default 0. On a light theme Dark Reader cannot show text darker than the theme foreground, so a mid-tone foreground washes out a site that was already readable. This moves that limit toward black on a light theme and white on a dark theme, keeping the hue. Rosé Pine on a news site went from 15.8:1 with the plugin off to 5.7:1 on, and 14.5:1 with text contrast at 100.
 - Keep logos vivid, on by default. A saturated color in a logo-sized inline SVG is left as the site drew it, so the Google wordmark is no longer dim on a dark theme or pale on a light one. On a dark theme a color with less than 3:1 contrast with the theme background is lightened as text instead. It is a build-time patch to the bundled Dark Reader engine, `scripts/vivid-svg-patch.mjs`, and the build stops if the code it patches moves.
 
 ## 0.3.1 — 2026-10-15

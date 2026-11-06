@@ -23,6 +23,8 @@ const tintBackground = document.querySelector("#tint-background");
 const tintBackgroundOut = document.querySelector("#tint-background-out");
 const tintText = document.querySelector("#tint-text");
 const tintTextOut = document.querySelector("#tint-text-out");
+const tintContrast = document.querySelector("#tint-contrast");
+const tintContrastOut = document.querySelector("#tint-contrast-out");
 const tintControls = document.querySelector("#tint-controls");
 const tintSelection = document.querySelector("#tint-selection");
 const tintVivid = document.querySelector("#tint-vivid");
@@ -106,6 +108,8 @@ function renderTint(tint) {
   tintBackgroundOut.textContent = `${tint.background}%`;
   tintText.value = tint.text;
   tintTextOut.textContent = `${tint.text}%`;
+  tintContrast.value = tint.contrast ?? 0;
+  tintContrastOut.textContent = `${tint.contrast ?? 0}%`;
   tintControls.checked = tint.controls !== false;
   tintSelection.checked = tint.selection !== false;
   tintVivid.checked = tint.vivid !== false;
@@ -194,6 +198,12 @@ tintText.addEventListener("input", () => {
 });
 tintText.addEventListener("change", () => {
   sendTint({ text: Number(tintText.value) });
+});
+tintContrast.addEventListener("input", () => {
+  tintContrastOut.textContent = `${tintContrast.value}%`;
+});
+tintContrast.addEventListener("change", () => {
+  sendTint({ contrast: Number(tintContrast.value) });
 });
 tintControls.addEventListener("change", () => {
   sendTint({ controls: tintControls.checked });
